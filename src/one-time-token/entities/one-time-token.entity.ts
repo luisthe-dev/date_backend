@@ -1,18 +1,44 @@
 import { User } from 'src/user/entities/user.entity';
-import { Entity } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
+export enum TokenStatus {
+  DEAD = 'dead',
+  ALIVE = 'alive',
+}
 
 @Entity({ name: 'one_time_tokens' })
 export class OneTimeToken {
+  @PrimaryGeneratedColumn()
   id: number;
 
   user: User;
 
+  @Column({ type: 'varchar' })
   generateReason: string;
+
+  @Column({ type: 'int' })
   generatedOTP: number;
 
-  tokenStatus: 'Dead' | 'Alive';
+  @Column({
+    type: 'enum',
+    enum: TokenStatus,
+    default: TokenStatus.ALIVE,
+  })
+  tokenStatus: TokenStatus;
 
-  createdAt: Date;
-  updatedAt: Date;
-  DeletedAt: Date;
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 }
