@@ -18,7 +18,7 @@ export class RequestLog {
   @Column({ type: 'varchar' })
   request: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   response: string;
 
   @CreateDateColumn()

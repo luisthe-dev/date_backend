@@ -21,19 +21,22 @@ export class User {
   @Column({ type: 'varchar' })
   fullName: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', unique: true, nullable: true })
   displayName: string;
 
   @Column({ type: 'varchar' })
   gender: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', unique: true })
   email: string;
+
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  phone: string;
 
   @Column({ type: 'varchar' })
   password: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext', nullable: true })
   mindThoughts: string;
 
   @Column({ type: 'date' })

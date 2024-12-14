@@ -19,7 +19,7 @@ export class PreferenceChoice {
   @JoinColumn()
   preference: Preference;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   value: string;
 
   @CreateDateColumn()

@@ -12,10 +12,10 @@ export class Chat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   chatTitle: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   chatMembers: string;
 
   @CreateDateColumn()

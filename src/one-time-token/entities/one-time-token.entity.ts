@@ -20,7 +20,7 @@ export class OneTimeToken {
 
   user: User;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   generateReason: string;
 
   @Column({ type: 'int' })

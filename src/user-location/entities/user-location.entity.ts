@@ -19,10 +19,10 @@ export class UserLocation {
   @JoinColumn()
   user: User;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   coordinates: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   address: string;
 
   @CreateDateColumn()

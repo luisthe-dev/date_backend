@@ -10,6 +10,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum TransactionStatus {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled',
+}
+
 @Entity({ name: 'transactions' })
 export class Transaction {
   @PrimaryGeneratedColumn()
@@ -25,10 +32,14 @@ export class Transaction {
   @Column({ type: 'varchar' })
   transactionId: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   thirdPartyData: string;
 
-  @Column({ type: 'varchar' })
+  @Column({
+    type: 'enum',
+    enum: TransactionStatus,
+    default: TransactionStatus.PENDING,
+  })
   transactionStatus: string;
 
   @CreateDateColumn()

@@ -12,7 +12,7 @@ export class Pricing {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   title: string;
 
   @CreateDateColumn()

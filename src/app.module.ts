@@ -39,6 +39,8 @@ import { RequestLog } from './request-log/entities/request-log.entity';
 import { Config } from './config/entities/config.entity';
 import { RecommendationHistoryModule } from './recommendation-history/recommendation-history.module';
 import { RecommendationHistory } from './recommendation-history/entities/recommendation-history.entity';
+import { ResponsesHelper } from './helpers/responses';
+import { UtilHelper } from './helpers/util';
 
 @Module({
   imports: [
@@ -94,6 +96,8 @@ import { RecommendationHistory } from './recommendation-history/entities/recomme
     RequestLogModule,
     MyConfigModule,
     RecommendationHistoryModule,
+    ResponsesHelper,
+    UtilHelper,
   ],
   controllers: [AppController],
   providers: [AppService],

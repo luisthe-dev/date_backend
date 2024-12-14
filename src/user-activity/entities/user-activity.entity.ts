@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,7 +15,10 @@ export class UserActivity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @OneToOne(() => User)
+  @JoinColumn()
   user: User;
+
   @Column({ type: 'varchar' })
   log: string;
 

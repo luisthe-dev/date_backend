@@ -24,7 +24,7 @@ export class ChatMessage {
   @JoinColumn()
   user: User;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'longtext' })
   message: string;
 
   @CreateDateColumn()

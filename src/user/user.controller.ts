@@ -1,64 +1,106 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { ResponsesHelper } from 'src/helpers/responses';
+import { LoginUserDto } from './dto/login-user.dto';
+import { UpdateUserPasswordDto } from './dto/update-password.dto';
+import { OneTimeTokenService } from 'src/one-time-token/one-time-token.service';
+import { VerifyOneTimeToken } from 'src/one-time-token/dto/verify-one-time-token.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly otpService: OneTimeTokenService,
+    private readonly responseHelper: ResponsesHelper,
+  ) {}
 
   @Post('/signup')
-  signUp() {}
+  async signUp(@Body() createUser: CreateUserDto) {
+    return 'this';
+    const response = await this.userService.createUser(createUser);
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 
   @Post('/signin')
-  signIn() {}
+  async signIn(@Body() loginUser: LoginUserDto) {
+    const response = await this.userService.loginUser(loginUser);
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 
   @Get()
-  getUser() {}
+  async getUser() {
+    const userId = 1;
+    const response = await this.userService.getUser(userId);
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 
   @Patch()
-  userUpdate() {}
+  async userUpdate() {}
 
   @Get('/activity')
-  getUserActivity() {}
+  async getUserActivity() {}
 
   @Post('/password/forgot')
-  requestPasswordReset() {}
+  async requestPasswordReset() {}
 
   @Post('/password/update')
-  updatePassword() {}
+  async updatePassword(@Body() updatePassword: UpdateUserPasswordDto) {
+    const userId = 1;
+    const response = await this.userService.updateUserPassword(
+      userId,
+      updatePassword,
+    );
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 
   @Get('medias')
-  getUserMedia() {}
+  async getUserMedia() {}
 
   @Post('/medias')
-  uploadUserMedia() {}
+  async uploadUserMedia() {}
 
   @Get('/locations')
-  getUserLocation() {}
+  async getUserLocation() {}
 
   @Post('/locations')
-  updateUserLocation() {}
+  async updateUserLocation() {}
 
   @Get('preferences')
-  getUserPreference() {}
+  async getUserPreference() {}
 
   @Post('preferences')
-  updateUserPreference() {}
+  async updateUserPreference() {}
 
   @Get('/wallets')
-  getUserWallet() {}
+  async getUserWallet() {}
 
   @Post('/wallets')
-  fundUserWallet() {}
+  async fundUserWallet() {}
 
   @Get('/recommendations')
-  getUserRecommendations() {}
+  async getUserRecommendations() {}
 
   @Post('/recommendations')
-  updateUserRecommendations() {}
-
-  @Patch('/tokens')
-  validateUserToken() {}
+  async updateUserRecommendations() {}
 
   @Post('/tokens')
-  requestNewToken() {}
+  async validateUserToken(@Body() tokenData: VerifyOneTimeToken) {
+    const userId = 1;
+    const response = await this.otpService.verifyToken(tokenData, userId);
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
+
+  @Patch('/tokens')
+  async requestNewToken() {
+    const userId = 1;
+    const response = await this.otpService.requestNewToken(userId);
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 }

@@ -24,7 +24,7 @@ export class UserPricing {
   @JoinColumn()
   pricing: Pricing;
 
-  @Column({ type: 'number' })
+  @Column({ type: 'numeric' })
   pricingValue: number;
 
   @CreateDateColumn()

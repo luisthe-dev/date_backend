@@ -37,7 +37,7 @@ export class RecommendationHistory {
   })
   recommendResponse: RecommendResponse;
 
-  @OneToOne(() => MeetUpRequest)
+  @OneToOne(() => MeetUpRequest, { nullable: true })
   @JoinColumn()
   meetUpId: MeetUpRequest;
 
