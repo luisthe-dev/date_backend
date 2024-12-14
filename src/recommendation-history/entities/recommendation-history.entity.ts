@@ -11,6 +11,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum RecommendResponse {
+  ACCEPT = 'accept',
+  REJECT = 'reject',
+}
+
 @Entity({ name: 'recommendation_history' })
 export class RecommendationHistory {
   @PrimaryGeneratedColumn()
@@ -25,7 +30,12 @@ export class RecommendationHistory {
   recommend: User;
 
   @Column({ type: 'varchar' })
-  recommendResponse: 'Accept' | 'Reject';
+  @Column({
+    type: 'enum',
+    enum: RecommendResponse,
+    default: RecommendResponse.ACCEPT,
+  })
+  recommendResponse: RecommendResponse;
 
   @OneToOne(() => MeetUpRequest)
   @JoinColumn()
