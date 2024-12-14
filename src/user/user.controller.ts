@@ -1,34 +1,64 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  @Post('/signup')
+  signUp() {}
+
+  @Post('/signin')
+  signIn() {}
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+  getUser() {}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+  @Patch()
+  userUpdate() {}
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
+  @Get('/activity')
+  getUserActivity() {}
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+  @Post('/password/forgot')
+  requestPasswordReset() {}
+
+  @Post('/password/update')
+  updatePassword() {}
+
+  @Get('medias')
+  getUserMedia() {}
+
+  @Post('/medias')
+  uploadUserMedia() {}
+
+  @Get('/locations')
+  getUserLocation() {}
+
+  @Post('/locations')
+  updateUserLocation() {}
+
+  @Get('preferences')
+  getUserPreference() {}
+
+  @Post('preferences')
+  updateUserPreference() {}
+
+  @Get('/wallets')
+  getUserWallet() {}
+
+  @Post('/wallets')
+  fundUserWallet() {}
+
+  @Get('/recommendations')
+  getUserRecommendations() {}
+
+  @Post('/recommendations')
+  updateUserRecommendations() {}
+
+  @Patch('/tokens')
+  validateUserToken() {}
+
+  @Post('/tokens')
+  requestNewToken() {}
 }
