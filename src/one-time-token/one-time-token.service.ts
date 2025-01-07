@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UtilHelper } from 'src/helpers/util';
 import { OneTimeToken, TokenStatus } from './entities/one-time-token.entity';
 import { ResponsesHelper } from 'src/helpers/responses';
 import { Repository } from 'typeorm';
@@ -7,17 +6,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { VerifyOneTimeToken } from './dto/verify-one-time-token.dto';
 import { UserService } from 'src/user/user.service';
 import { User, UserStatus } from 'src/user/entities/user.entity';
+import { UtilsHelper } from 'src/helpers/utils';
 
 @Injectable()
 export class OneTimeTokenService {
   constructor(
     @InjectRepository(OneTimeToken)
-    @InjectRepository(User)
     private readonly oneTimeTokenRepository: Repository<OneTimeToken>,
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly responseHelper: ResponsesHelper,
     private readonly userService: UserService,
-    private readonly utilHelper: UtilHelper,
+    private readonly utilHelper: UtilsHelper,
   ) {}
 
   async createNewToken(userId: number) {

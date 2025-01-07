@@ -24,10 +24,6 @@ export class ResponsesHelper {
     return { status: true, data: data, message: message };
   }
 
-  controllerFailedResponse(message: string, data: any = {}) {
-    return { status: 'failed', message: message, data: data };
-  }
-
   buildControllerResponse(
     serviceResponse: ServiceResponseBuild,
   ): ControllerResponseBuild {

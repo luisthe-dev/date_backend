@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { ResponsesHelper } from 'src/helpers/responses';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-password.dto';
+import { buildUserInfoResponse } from './dto/user-info.dto';
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,7 @@ export class UserService {
       );
 
     if (userInfo.phone) {
-      const phoneExists = this.userRepository.findOne({
+      const phoneExists = await this.userRepository.findOne({
         where: { phone: userInfo.phone },
       });
 
@@ -55,7 +56,9 @@ export class UserService {
     });
 
     return this.responseHelper.serviceSuccessResponse(
-      this.userRepository.save(newUser, { reload: true }),
+      buildUserInfoResponse(
+        await this.userRepository.save(newUser, { reload: true }),
+      ),
       'User Created Successfully',
     );
   }

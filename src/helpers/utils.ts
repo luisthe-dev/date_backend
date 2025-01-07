@@ -1,4 +1,4 @@
-export class UtilHelper {
+export class UtilsHelper {
   generateRandInt(length: number = 6) {
     let start = '';
     let end = '';

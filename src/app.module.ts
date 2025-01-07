@@ -40,7 +40,8 @@ import { Config } from './config/entities/config.entity';
 import { RecommendationHistoryModule } from './recommendation-history/recommendation-history.module';
 import { RecommendationHistory } from './recommendation-history/entities/recommendation-history.entity';
 import { ResponsesHelper } from './helpers/responses';
-import { UtilHelper } from './helpers/util';
+import { UtilsHelper } from './helpers/utils';
+import { HelpersModule } from './helpers/helpers.module';
 
 @Module({
   imports: [
@@ -96,8 +97,7 @@ import { UtilHelper } from './helpers/util';
     RequestLogModule,
     MyConfigModule,
     RecommendationHistoryModule,
-    ResponsesHelper,
-    UtilHelper,
+    HelpersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
