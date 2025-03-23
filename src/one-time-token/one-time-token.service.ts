@@ -37,7 +37,7 @@ export class OneTimeTokenService {
 
     await this.oneTimeTokenRepository.save(newToken);
 
-    return this.responseHelper.serviceSuccessResponse(
+    return this.responseHelper.buildServiceResponse(
       {},
       'One Time Token Generated Successfully',
     );
@@ -60,7 +60,7 @@ export class OneTimeTokenService {
 
     await this.oneTimeTokenRepository.save(newToken);
 
-    return this.responseHelper.serviceSuccessResponse(
+    return this.responseHelper.buildServiceResponse(
       {},
       'One Time Token Generated Successfully',
     );
@@ -75,8 +75,10 @@ export class OneTimeTokenService {
 
     if (token && process.env.APP_ENV != 'dev')
       throw new NotFoundException(
-        this.responseHelper.serviceFailResponse(
+        this.responseHelper.buildServiceResponse(
+          {},
           'Invalid Or Expired One Time Token.',
+          false
         ),
       );
 
@@ -85,7 +87,7 @@ export class OneTimeTokenService {
 
     if (process.env.APP_ENV != 'dev') this.killToken(token);
 
-    return this.responseHelper.serviceSuccessResponse(
+    return this.responseHelper.buildServiceResponse(
       {},
       'User Verified Successfully',
     );

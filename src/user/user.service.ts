@@ -10,9 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { ResponsesHelper } from 'src/helpers/responses';
+import { ResponsesHelper, ServiceResponseBuild } from 'src/helpers/responses';
 import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-password.dto';
+import { UserActivityService } from 'src/user-activity/user-activity.service';
+import { OneTimeTokenService } from 'src/one-time-token/one-time-token.service';
+import { JwtService } from '@nestjs/jwt';
 import { buildUserInfoResponse } from './dto/user-info.dto';
 
 @Injectable()
@@ -20,17 +23,24 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly userActivityService: UserActivityService,
+    // private readonly oneTimeTokenService: OneTimeTokenService,
     private readonly responseHelper: ResponsesHelper,
+    private jwtService: JwtService,
   ) {}
 
-  async createUser(userInfo: CreateUserDto) {
+  async createUser(userInfo: CreateUserDto): Promise<ServiceResponseBuild> {
     const emailExists = await this.userRepository.findOne({
       where: { email: userInfo.email },
     });
 
     if (emailExists)
       throw new BadRequestException(
-        this.responseHelper.serviceFailResponse('Email Already Exists'),
+        this.responseHelper.buildServiceResponse(
+          {},
+          'Email Already Exists',
+          false,
+        ),
       );
 
     if (userInfo.phone) {
@@ -40,11 +50,15 @@ export class UserService {
 
       if (phoneExists)
         throw new BadRequestException(
-          this.responseHelper.serviceFailResponse('Phone Already Exists'),
+          this.responseHelper.buildServiceResponse(
+            {},
+            'Phone Already Exists',
+            false,
+          ),
         );
     }
 
-    const hashedPassword = await bcrypt.hash(userInfo.password, 20);
+    const hashedPassword = await bcrypt.hash(userInfo.password, 3);
 
     const newUser = this.userRepository.create({
       fullName: userInfo.fullName,
@@ -55,80 +69,137 @@ export class UserService {
       dateOfBirth: userInfo.dateOfBirth,
     });
 
-    return this.responseHelper.serviceSuccessResponse(
-      buildUserInfoResponse(
-        await this.userRepository.save(newUser, { reload: true }),
-      ),
+    const user = await this.userRepository.save(newUser, { reload: true });
+
+    // this.oneTimeTokenService.createNewToken(user.id);
+
+    this.userActivityService.createUserActivityRecord(user, {
+      logEntry: 'User Registered Account Created Successfully',
+    });
+
+    delete user.password;
+
+    const userAuthToken = await this.jwtService.signAsync({ ...user });
+
+    return this.responseHelper.buildServiceResponse(
+      {
+        user: buildUserInfoResponse(user),
+        token: { access_token: userAuthToken },
+      },
       'User Created Successfully',
     );
   }
 
-  async loginUser(userInfo: LoginUserDto) {
-    const emailExists = await this.userRepository.findOne({
+  async loginUser(userInfo: LoginUserDto): Promise<ServiceResponseBuild> {
+    const user = await this.userRepository.findOne({
       where: { email: userInfo.userLogin },
     });
 
-    if (!emailExists)
+    if (!user)
       throw new NotFoundException(
-        this.responseHelper.serviceFailResponse('Email Does Not Exist'),
+        this.responseHelper.buildServiceResponse(
+          {},
+          'Invalid Login Information',
+          false,
+        ),
       );
 
     const passwordValid = await bcrypt.compare(
       userInfo.password,
-      emailExists.password,
+      user.password,
     );
 
     if (!passwordValid)
       throw new BadRequestException(
-        this.responseHelper.serviceFailResponse('Invalid Login Information'),
+        this.responseHelper.buildServiceResponse(
+          {},
+          'Invalid Login Information',
+          false,
+        ),
       );
 
-    return this.responseHelper.serviceSuccessResponse(
-      emailExists,
+    this.userActivityService.createUserActivityRecord(user, {
+      logEntry: 'User Logged In Successfully',
+    });
+
+    delete user.password;
+
+    const userAuthToken = await this.jwtService.signAsync({ ...user });
+
+    return this.responseHelper.buildServiceResponse(
+      {
+        user: buildUserInfoResponse(user),
+        token: { access_token: userAuthToken },
+      },
       'User Logged In Successfully',
     );
   }
 
-  async getUser(userId: number) {
-    const idExists = await this.userRepository.findOne({
+  async getUser(userId: number): Promise<ServiceResponseBuild> {
+    const user = await this.userRepository.findOne({
       where: { id: userId },
     });
 
-    if (idExists)
+    if (!user)
       throw new UnauthorizedException(
-        this.responseHelper.serviceFailResponse('User Does Not Exist'),
+        this.responseHelper.buildServiceResponse(
+          {},
+          'User Does Not Exist',
+          false,
+        ),
       );
 
-    return this.responseHelper.serviceSuccessResponse(
-      idExists,
+    return this.responseHelper.buildServiceResponse(
+      buildUserInfoResponse(user),
       'User Fetched Successfully',
     );
   }
 
-  async updateUserPassword(userId, passwordInfo: UpdateUserPasswordDto) {
-    const idExists = await this.userRepository.findOne({
-      where: { id: userId },
-    });
+  async updateUser(
+    user: User,
+    updateData: UpdateUserDto,
+  ): Promise<ServiceResponseBuild> {
+    user = { ...user, ...updateData };
 
-    if (idExists)
-      throw new UnauthorizedException(
-        this.responseHelper.serviceFailResponse('User Does Not Exist'),
-      );
+    (user = await this.userRepository.save(user, { reload: true })),
+      this.userActivityService.createUserActivityRecord(user, {
+        logEntry: 'User Information Updated Successfully',
+      });
 
+    return this.responseHelper.buildServiceResponse(
+      buildUserInfoResponse(user),
+      'User Data Updated Successfully',
+    );
+  }
+
+  async updateUserPassword(
+    user: User,
+    passwordInfo: UpdateUserPasswordDto,
+  ): Promise<ServiceResponseBuild> {
     const passwordValid = bcrypt.compare(
       passwordInfo.currentPassword,
-      idExists.password,
+      user.password,
     );
 
     if (!passwordValid)
       throw new BadRequestException(
-        this.responseHelper.serviceFailResponse('Invalid User Information'),
+        this.responseHelper.buildServiceResponse(
+          {},
+          'Invalid User Information',
+          false,
+        ),
       );
 
-    idExists.password = passwordInfo.newPassword;
+    user.password = passwordInfo.newPassword;
 
-    return this.responseHelper.serviceSuccessResponse(
-      this.userRepository.save(idExists, { reload: true }),
+    this.userActivityService.createUserActivityRecord(user, {
+      logEntry: 'User Updated Password Successfully',
+    });
+
+    return this.responseHelper.buildServiceResponse(
+      buildUserInfoResponse(
+        await this.userRepository.save(user, { reload: true }),
+      ),
       'User Password Updated Successfully',
     );
   }

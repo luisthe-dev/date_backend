@@ -42,6 +42,9 @@ import { RecommendationHistory } from './recommendation-history/entities/recomme
 import { ResponsesHelper } from './helpers/responses';
 import { UtilsHelper } from './helpers/utils';
 import { HelpersModule } from './helpers/helpers.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -98,6 +101,22 @@ import { HelpersModule } from './helpers/helpers.module';
     MyConfigModule,
     RecommendationHistoryModule,
     HelpersModule,
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.MAIL_HOST,
+        port: +process.env.MAIL_PORT || 2525,
+        auth: {
+          user: process.env.MAIL_USERNAME,
+          pass: process.env.MAIL_PASSWORD,
+        },
+      },
+    }),
+    MailModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: "120d" },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

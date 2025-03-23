@@ -6,10 +6,19 @@ import { OneTimeToken } from './entities/one-time-token.entity';
 import { ResponsesHelper } from 'src/helpers/responses';
 import { UtilsHelper } from 'src/helpers/utils';
 import { UserService } from 'src/user/user.service';
+import { UserActivityService } from 'src/user-activity/user-activity.service';
+import { UserActivity } from 'src/user-activity/entities/user-activity.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, OneTimeToken])],
+  imports: [TypeOrmModule.forFeature([User, OneTimeToken, UserActivity])],
   controllers: [],
-  providers: [OneTimeTokenService, UserService, ResponsesHelper, UtilsHelper],
+  providers: [
+    OneTimeTokenService,
+    UserService,
+    ResponsesHelper,
+    UtilsHelper,
+    UserActivityService,
+    OneTimeTokenService
+  ],
 })
 export class OneTimeTokenModule {}

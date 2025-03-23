@@ -1,26 +1,67 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserActivityDto } from './dto/create-user-activity.dto';
-import { UpdateUserActivityDto } from './dto/update-user-activity.dto';
+import { PaginatedServiceResponseBuild, ResponsesHelper, ServiceResponseBuild } from 'src/helpers/responses';
+import { User } from 'src/user/entities/user.entity';
+import { ActivityData } from './dto/activity-data.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserActivity } from './entities/user-activity.entity';
+import { Repository } from 'typeorm';
+import { PaginationRequestDto } from 'src/helpers/dtos/pagination-request.dto';
 
 @Injectable()
 export class UserActivityService {
-  create(createUserActivityDto: CreateUserActivityDto) {
-    return 'This action adds a new userActivity';
+  constructor(
+    @InjectRepository(UserActivity)
+    private readonly userActivityRepository: Repository<UserActivity>,
+    private readonly responseHelper: ResponsesHelper,
+  ) {}
+
+  async createUserActivityRecord(
+    user: User,
+    activityData: ActivityData,
+  ): Promise<ServiceResponseBuild> {
+    
+    delete user.password;
+
+    const newActivity = this.userActivityRepository.create({
+      log: activityData.logEntry,
+      user: user,
+    });
+
+    await this.userActivityRepository.save(newActivity, { reload: true });
+
+    return this.responseHelper.buildServiceResponse(
+      {},
+      'User Activity Recorded Successfully',
+    );
   }
 
-  findAll() {
-    return `This action returns all userActivity`;
-  }
+  async getUserActivity(
+    user: User,
+    pagination: PaginationRequestDto,
+  ): Promise<PaginatedServiceResponseBuild> {
+    const userActivity = await this.userActivityRepository.find({
+      order: {
+        id: 'DESC',
+      },
+      relations: {
+        user: true,
+      },
+      where: { user: { id: user.id } },
+      skip: pagination.limit * (pagination.page - 1),
+      take: pagination.limit,
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} userActivity`;
-  }
+    const total_count = await this.userActivityRepository.count({
+      where: { user: { id: user.id } },
+      relations: {
+        user: true,
+      },
+    });
 
-  update(id: number, updateUserActivityDto: UpdateUserActivityDto) {
-    return `This action updates a #${id} userActivity`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} userActivity`;
+    return this.responseHelper.buildPaginatedServiceResponse(
+      userActivity,
+      total_count,
+      'User Activity Fetched Successfully',
+    );
   }
 }
