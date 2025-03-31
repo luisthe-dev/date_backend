@@ -1,3 +1,3 @@
 export class VerifyOneTimeToken {
-  token: number;
+  token: string;
 }

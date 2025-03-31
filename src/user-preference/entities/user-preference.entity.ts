@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'user_prefence_choices' })
+@Entity({ name: 'user_preference_choices' })
 export class UserPreference {
   @PrimaryGeneratedColumn()
   id: number;

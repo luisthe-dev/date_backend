@@ -47,8 +47,8 @@ export class UserActivityService {
         user: true,
       },
       where: { user: { id: user.id } },
-      skip: pagination.limit * (pagination.page - 1),
-      take: pagination.limit,
+      skip: pagination.limit * (pagination.page - 1) || 0,
+      take: pagination.limit || 20,
     });
 
     const total_count = await this.userActivityRepository.count({

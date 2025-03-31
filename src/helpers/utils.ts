@@ -1,15 +1,11 @@
 export class UtilsHelper {
   generateRandInt(length: number = 6) {
-    let start = '';
-    let end = '';
+    let code = '';
 
-    for (let i = 0; i < length; i++) {
-      start = start + '' + 0;
-      end = end + '' + 9;
+    for(let i = 0; i < length; i++) {
+      code = code + '' + Math.floor(Math.random() * (9 - 0 + 1) + 0);
     }
 
-    return Math.floor(
-      Math.random() * (Number(end) - Number(start)) * Number(start),
-    );
+    return code;
   }
 }

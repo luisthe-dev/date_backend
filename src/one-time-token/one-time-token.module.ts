@@ -17,8 +17,7 @@ import { UserActivity } from 'src/user-activity/entities/user-activity.entity';
     UserService,
     ResponsesHelper,
     UtilsHelper,
-    UserActivityService,
-    OneTimeTokenService
+    UserActivityService
   ],
 })
 export class OneTimeTokenModule {}

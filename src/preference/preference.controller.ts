@@ -1,20 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { PreferenceService } from './preference.service';
 import { CreatePreferenceDto } from './dto/create-preference.dto';
 import { UpdatePreferenceDto } from './dto/update-preference.dto';
+import { ResponsesHelper } from 'src/helpers/responses';
+import { PaginationRequestDto } from 'src/helpers/dtos/pagination-request.dto';
 
 @Controller('preference')
 export class PreferenceController {
-  constructor(private readonly preferenceService: PreferenceService) {}
+  constructor(
+    private readonly preferenceService: PreferenceService,
+    private readonly responseHelper: ResponsesHelper,
+  ) {}
 
   @Post()
-  create(@Body() createPreferenceDto: CreatePreferenceDto) {
-    return this.preferenceService.create(createPreferenceDto);
+  async create(@Body() createPreferenceDto: CreatePreferenceDto) {
+    const response = await this.preferenceService.create(createPreferenceDto);
+
+    return this.responseHelper.buildControllerResponse(response);
   }
 
   @Get()
-  findAll() {
-    return this.preferenceService.findAll();
+  async findAll(@Query() paginationData: PaginationRequestDto) {
+    const response = await this.preferenceService.findAll(
+      paginationData,
+    );
+
+    return this.responseHelper.buildPaginatedControllerResponse(
+      response,
+      paginationData,
+    );
   }
 
   @Get(':id')
@@ -23,7 +46,10 @@ export class PreferenceController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePreferenceDto: UpdatePreferenceDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePreferenceDto: UpdatePreferenceDto,
+  ) {
     return this.preferenceService.update(+id, updatePreferenceDto);
   }
 

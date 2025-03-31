@@ -1,8 +1,10 @@
+import { PreferenceChoice } from 'src/preference-choice/entities/preference-choice.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -23,4 +25,7 @@ export class Preference {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  @OneToMany(() => PreferenceChoice, (preferenceChoice) => preferenceChoice.preference)
+  preference_choices: PreferenceChoice[];
 }

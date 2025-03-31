@@ -1,1 +1,4 @@
-export class CreatePreferenceDto {}
+export class CreatePreferenceDto {
+    title: string;
+    choices: string[];
+}

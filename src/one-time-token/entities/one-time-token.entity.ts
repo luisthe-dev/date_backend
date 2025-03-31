@@ -4,6 +4,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,13 +20,16 @@ export class OneTimeToken {
   @PrimaryGeneratedColumn()
   id: number;
 
+
+  @ManyToOne(() => User)
+  @JoinColumn()
   user: User;
 
   @Column({ type: 'varchar', nullable: true })
   generateReason: string;
 
-  @Column({ type: 'int' })
-  generatedOTP: number;
+  @Column({ type: 'varchar' })
+  generatedOTP: string;
 
   @Column({
     type: 'enum',

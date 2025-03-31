@@ -24,9 +24,9 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly userActivityService: UserActivityService,
-    // private readonly oneTimeTokenService: OneTimeTokenService,
+    private readonly oneTimeTokenService: OneTimeTokenService,
     private readonly responseHelper: ResponsesHelper,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createUser(userInfo: CreateUserDto): Promise<ServiceResponseBuild> {
@@ -71,7 +71,7 @@ export class UserService {
 
     const user = await this.userRepository.save(newUser, { reload: true });
 
-    // this.oneTimeTokenService.createNewToken(user.id);
+    this.oneTimeTokenService.createNewToken(user.id);
 
     this.userActivityService.createUserActivityRecord(user, {
       logEntry: 'User Registered Account Created Successfully',

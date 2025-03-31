@@ -17,8 +17,8 @@ export const buildPaginatedResponse = (
 ): PaginationResponseDto => {
   return {
     total: pageData.total_count,
-    count: +paginationData.limit,
-    current_page: +paginationData.page,
-    total_page: Math.ceil(+pageData.total_count / +paginationData.limit),
+    count: (+paginationData.page || 1) == 1 && (pageData.total_count < (+paginationData.limit || 20)) ?  pageData.total_count : +paginationData.limit || 20,
+    current_page: +paginationData.page || 1,
+    total_page: Math.ceil(+pageData.total_count / (+paginationData.limit || 20)),
   };
 };

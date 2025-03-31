@@ -5,6 +5,8 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -15,8 +17,7 @@ export class PreferenceChoice {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => Preference)
-  @JoinColumn()
+  @ManyToOne(() => Preference, (preference) => preference.preference_choices)
   preference: Preference;
 
   @Column({ type: 'longtext' })
