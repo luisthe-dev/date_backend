@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -20,14 +21,16 @@ export class OneTimeToken {
   @PrimaryGeneratedColumn()
   id: number;
 
-
+  @Index()
   @ManyToOne(() => User)
   @JoinColumn()
   user: User;
 
+  @Index()
   @Column({ type: 'varchar', nullable: true })
   generateReason: string;
 
+  @Index()
   @Column({ type: 'varchar' })
   generatedOTP: string;
 

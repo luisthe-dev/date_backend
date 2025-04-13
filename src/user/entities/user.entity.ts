@@ -1,9 +1,12 @@
 import { Exclude } from 'class-transformer';
+import { UserMedia } from 'src/user-media/entities/user-media.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -22,15 +25,18 @@ export class User {
   @Column({ type: 'varchar' })
   fullName: string;
 
+  @Index()
   @Column({ type: 'varchar', unique: true, nullable: true })
   displayName: string;
 
   @Column({ type: 'varchar' })
   gender: string;
 
+  @Index()
   @Column({ type: 'varchar', unique: true })
   email: string;
 
+  @Index()
   @Column({ type: 'varchar', unique: true, nullable: true })
   phone: string;
 
@@ -44,6 +50,7 @@ export class User {
   @Column({ type: 'date' })
   dateOfBirth: Date;
 
+  @Index()
   @Column({
     type: 'enum',
     enum: UserStatus,
@@ -59,6 +66,9 @@ export class User {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  @OneToMany(() => UserMedia, (userMedia) => userMedia.user)
+  userMedias: UserMedia[];
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

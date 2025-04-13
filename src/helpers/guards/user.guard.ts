@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { User } from '../../user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { User, UserStatus } from '../../user/entities/user.entity';
+import { Not, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -31,10 +31,13 @@ export class UserGuard implements CanActivate {
       request['user'] = payload;
 
       const user = await this.userRepository.findOne({
-        where: { id: payload.id },
+        where: { id: payload.id, accountStatus: Not(UserStatus.BLOCKED) },
       });
 
       if (!user) throw new UnauthorizedException();
+
+      delete user.password;
+      request['user'] = user;
     } catch {
       throw new UnauthorizedException();
     }

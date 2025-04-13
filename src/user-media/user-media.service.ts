@@ -1,26 +1,74 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserMediaDto } from './dto/create-user-media.dto';
-import { UpdateUserMediaDto } from './dto/update-user-media.dto';
+import { User } from 'src/user/entities/user.entity';
+import { PaginationRequestDto } from 'src/helpers/dtos/pagination-request.dto';
+import {
+  PaginatedServiceResponseBuild,
+  ResponsesHelper,
+  ServiceResponseBuild,
+} from 'src/helpers/responses';
+import { Repository } from 'typeorm';
+import { UserMedia } from './entities/user-media.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserMediaService {
-  create(createUserMediaDto: CreateUserMediaDto) {
-    return 'This action adds a new userMedia';
-  }
+  constructor(
+    @InjectRepository(UserMedia)
+    private readonly userMediaRepository: Repository<UserMedia>,
+    private readonly responseHelper: ResponsesHelper,
+  ) {}
 
-  findAll() {
-    return `This action returns all userMedia`;
-  }
+  getUserMedia = async (
+    user: User,
+    pagination: PaginationRequestDto,
+  ): Promise<PaginatedServiceResponseBuild> => {
+    const userMedia = await this.userMediaRepository.find({
+      order: {
+        id: 'DESC',
+      },
+      relations: {
+        user: true,
+      },
+      where: { user: { id: user.id } },
+      skip: pagination.limit * (pagination.page - 1) || 0,
+      take: pagination.limit || 20,
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} userMedia`;
-  }
+    const total_count = await this.userMediaRepository.count({
+      where: { user: { id: user.id } },
+      relations: {
+        user: true,
+      },
+    });
 
-  update(id: number, updateUserMediaDto: UpdateUserMediaDto) {
-    return `This action updates a #${id} userMedia`;
-  }
+    return this.responseHelper.buildPaginatedServiceResponse(
+      userMedia,
+      total_count,
+      'User Media Fetched Successfully',
+    );
+  };
 
-  remove(id: number) {
-    return `This action removes a #${id} userMedia`;
-  }
+  uploadUserMedia = async (
+    user: User,
+    medias: Express.Multer.File[],
+  ): Promise<ServiceResponseBuild> => {
+    const userMedias: UserMedia[] = [];
+
+    for (const media of medias) {
+      const userMedia = this.userMediaRepository.create({
+        mediaType: media.mimetype,
+        mediaUrl: media.path,
+        user: user,
+      });
+
+      await this.userMediaRepository.save(userMedia);
+
+      userMedias.push(userMedia);
+    }
+
+    return this.responseHelper.buildServiceResponse(
+      userMedias,
+      'User Media Uploaded Successfully',
+    );
+  };
 }

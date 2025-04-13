@@ -4,8 +4,9 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -15,7 +16,8 @@ export class UserMedia {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User)
+  @Index()
+  @ManyToOne(() => User, user => user.userMedias)
   @JoinColumn()
   user: User;
 
