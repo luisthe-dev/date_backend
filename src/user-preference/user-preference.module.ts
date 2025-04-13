@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UserPreferenceService } from './user-preference.service';
-import { UserPreferenceController } from './user-preference.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserPreference } from './entities/user-preference.entity';
+import { ResponsesHelper } from 'src/helpers/responses';
+import { Preference } from 'src/preference/entities/preference.entity';
+import { PreferenceChoice } from 'src/preference-choice/entities/preference-choice.entity';
 
 @Module({
-  controllers: [UserPreferenceController],
-  providers: [UserPreferenceService],
+  imports: [TypeOrmModule.forFeature([UserPreference, Preference, PreferenceChoice])],
+  controllers: [],
+  providers: [UserPreferenceService, ResponsesHelper],
 })
 export class UserPreferenceModule {}

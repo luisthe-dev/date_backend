@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { UserMedia } from 'src/user-media/entities/user-media.entity';
+import { UserPreference } from 'src/user-preference/entities/user-preference.entity';
 import {
   Column,
   CreateDateColumn,
@@ -25,18 +26,15 @@ export class User {
   @Column({ type: 'varchar' })
   fullName: string;
 
-  @Index()
   @Column({ type: 'varchar', unique: true, nullable: true })
   displayName: string;
 
   @Column({ type: 'varchar' })
   gender: string;
 
-  @Index()
   @Column({ type: 'varchar', unique: true })
   email: string;
 
-  @Index()
   @Column({ type: 'varchar', unique: true, nullable: true })
   phone: string;
 
@@ -50,7 +48,6 @@ export class User {
   @Column({ type: 'date' })
   dateOfBirth: Date;
 
-  @Index()
   @Column({
     type: 'enum',
     enum: UserStatus,
@@ -69,6 +66,9 @@ export class User {
 
   @OneToMany(() => UserMedia, (userMedia) => userMedia.user)
   userMedias: UserMedia[];
+
+  @OneToMany(() => UserPreference, (userPreference) => userPreference.user)
+  user_preferences: UserPreference[];
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

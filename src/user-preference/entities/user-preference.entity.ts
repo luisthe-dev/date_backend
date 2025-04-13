@@ -5,7 +5,9 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -16,15 +18,18 @@ export class UserPreference {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User, (user) => user.user_preferences)
   @JoinColumn()
   user: User;
 
-  @OneToOne(() => Preference)
+  @ManyToOne(() => Preference, (preference) => preference.user_preferences)
   @JoinColumn()
   preference: Preference;
 
-  @OneToOne(() => PreferenceChoice)
+  @ManyToOne(
+    () => PreferenceChoice,
+    (preferenceChoice) => preferenceChoice.user_preferences,
+  )
   @JoinColumn()
   preferenceChoice: PreferenceChoice;
 
@@ -33,7 +38,4 @@ export class UserPreference {
 
   @UpdateDateColumn()
   updated_at: Date;
-
-  @DeleteDateColumn()
-  deleted_at: Date;
 }

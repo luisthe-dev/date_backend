@@ -29,6 +29,9 @@ import { VerifyGuard } from 'src/helpers/guards/verify.guard';
 import { UserMediaService } from 'src/user-media/user-media.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/helpers/configs/multer.config';
+import { UserPreferenceService } from 'src/user-preference/user-preference.service';
+import { UpdatePreferenceDto } from 'src/preference/dto/update-preference.dto';
+import { UpdateUserPreferenceDto } from 'src/user-preference/dto/update-user-preference.dto';
 
 @Controller('user')
 export class UserController {
@@ -38,6 +41,7 @@ export class UserController {
     private readonly responseHelper: ResponsesHelper,
     private readonly userActivityService: UserActivityService,
     private readonly userMediaService: UserMediaService,
+    private readonly userPreferenceService: UserPreferenceService,
   ) {}
 
   @Post('/signup')
@@ -148,12 +152,34 @@ export class UserController {
   async updateUserLocation() {}
 
   @UseGuards(UserGuard, VerifyGuard)
-  @Get('preferences')
-  async getUserPreference() {}
+  @Get('preference')
+  async getUserPreference(
+    @Query() paginationData: PaginationRequestDto,
+    @Req() request: any,
+  ) {
+    const { user }: { user: User } = request;
+    const response = await this.userPreferenceService.getUserPreferences(
+      user,
+      paginationData,
+    );
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 
   @UseGuards(UserGuard, VerifyGuard)
-  @Put('preferences')
-  async updateUserPreference() {}
+  @Put('preference')
+  async updateUserPreference(
+    @Body() updatePreference: UpdateUserPreferenceDto,
+    @Req() request: any,
+  ) {
+    const { user }: { user: User } = request;
+    const response = await this.userPreferenceService.updateUserPreference(
+      user,
+      updatePreference,
+    );
+
+    return this.responseHelper.buildControllerResponse(response);
+  }
 
   @UseGuards(UserGuard, VerifyGuard)
   @Get('/wallets')

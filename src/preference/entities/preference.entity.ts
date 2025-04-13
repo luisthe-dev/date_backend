@@ -1,4 +1,5 @@
 import { PreferenceChoice } from 'src/preference-choice/entities/preference-choice.entity';
+import { UserPreference } from 'src/user-preference/entities/user-preference.entity';
 import {
   Column,
   CreateDateColumn,
@@ -26,6 +27,15 @@ export class Preference {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @OneToMany(() => PreferenceChoice, (preferenceChoice) => preferenceChoice.preference)
+  @OneToMany(
+    () => PreferenceChoice,
+    (preferenceChoice) => preferenceChoice.preference,
+  )
   preference_choices: PreferenceChoice[];
+
+  @OneToMany(
+    () => UserPreference,
+    (userPreference) => userPreference.preference,
+  )
+  user_preferences: UserPreference[];
 }

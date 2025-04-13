@@ -11,9 +11,23 @@ import { UserActivityService } from 'src/user-activity/user-activity.service';
 import { UserActivity } from 'src/user-activity/entities/user-activity.entity';
 import { UserMedia } from 'src/user-media/entities/user-media.entity';
 import { UserMediaService } from 'src/user-media/user-media.service';
+import { UserPreferenceService } from 'src/user-preference/user-preference.service';
+import { UserPreference } from 'src/user-preference/entities/user-preference.entity';
+import { Preference } from 'src/preference/entities/preference.entity';
+import { PreferenceChoice } from 'src/preference-choice/entities/preference-choice.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, OneTimeToken, UserActivity, UserMedia])],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      OneTimeToken,
+      UserActivity,
+      UserMedia,
+      UserPreference,
+      Preference,
+      PreferenceChoice
+    ]),
+  ],
   controllers: [UserController],
   providers: [
     UserService,
@@ -21,7 +35,8 @@ import { UserMediaService } from 'src/user-media/user-media.service';
     ResponsesHelper,
     UtilsHelper,
     UserActivityService,
-    UserMediaService
+    UserMediaService,
+    UserPreferenceService,
   ],
 })
 export class UserModule {}

@@ -1,1 +1,4 @@
-export class CreateUserPreferenceDto {}
+export class CreateUserPreferenceDto {
+    preferenceId: number;
+    choiceId: number;
+}
